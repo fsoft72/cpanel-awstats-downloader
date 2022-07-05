@@ -1,16 +1,16 @@
 #!/usr/bin/env python3
 
-import os
-import sys
-import requests
-import json
+import argparse
 import datetime
+import json
+import os
+import requests
 import shutil
+import sys
 import zipfile
 
-from cfg import cfg
-
-DEST_DIR = cfg [ 'tmp_dir' ]
+cfg  = {}
+sess = requests.Session()
 
 def dir_init ( dest_dir ):
 	"""
@@ -22,9 +22,6 @@ def dir_init ( dest_dir ):
 
 	# copy images to awstats dir
 	shutil.copytree ( "images", os.path.join ( dest_dir, "awstats", "images" ) )
-
-dir_init ( DEST_DIR )
-sess = requests.Session()
 
 def login_to_cpanel ():
 	"""
@@ -62,7 +59,7 @@ def download_stats ( max_months = 12 ):
 
 		html = p.text.replace( '/images', 'images' )
 
-		open ( os.path.join ( DEST_DIR, "awstats", '%(year)s-%(month)s.html' % cfg ), 'w' ).write ( html )
+		open ( os.path.join ( cfg [ 'tmp_dir' ], "awstats", '%(year)s-%(month)s.html' % cfg ), 'w' ).write ( html )
 
 		month -= 1
 		if month == 0:
@@ -72,7 +69,7 @@ def download_stats ( max_months = 12 ):
 def create_stats_zip ():
 	# recursively compress all files in DEST_DIR in zip file
 	z = zipfile.ZipFile ( os.path.join ( cfg [ 'save_dir' ], "awstats.zip" ), 'w' )
-	os.chdir( DEST_DIR )
+	os.chdir( cfg [ 'tmp_dir' ] )
 	for root, dirs, files in os.walk ( "awstats" ):
 		for file in files:
 			z.write ( os.path.join ( root, file ) )
@@ -112,15 +109,28 @@ def send_email ():
 	s.sendmail ( cfg [ 'smtp' ] [ 'from' ], cfg [ 'smtp' ] [ 'to' ], msg.as_string() )
 	s.quit()
 
+def read_cfg ( cfg_file ):
+	"""
+	read the config file
+	"""
+	global cfg
 
+	cfg = json.loads ( open ( cfg_file, 'r' ).read())
 
 if __name__ == "__main__":
+	parser = argparse.ArgumentParser()
+	parser.add_argument ( '--max-months', type=int, default=12 )
+	parser.add_argument( '--cfg', type=str, default='cfg.json' )
+	args = parser.parse_args()
+
+	read_cfg ( args.cfg )
+	dir_init ( cfg [ 'tmp_dir' ] )
 	login_to_cpanel()
-	download_stats( 1 )
+	download_stats( args.max_months )
 	create_stats_zip()
 	print( "Done!" )
 
-	send_email()
+	#send_email()
 	sys.exit( 0 )
 
 
