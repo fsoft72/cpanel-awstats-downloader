@@ -1,0 +1,16 @@
+{
+	"user": "cpanel_user",
+	"password": "cpanel_password",
+	"domain": "domain",
+	"tmp_dir": "/tmp",
+	"save_dir": "/ramdisk",
+	"smtp": {
+		"user": "smtp_user",
+		"password": "smtp_password",
+		"server": "smtp_server",
+		"from": "email-sender-addr",
+		"to": "email-destination-addr"
+	},
+	"login_page": "https://%(domain)s:2083/",
+	"awstats": "https://%(domain)s:2083/%(session)s/awstats.pl?databasebreak=month&month=%(month)s&year=%(year)s&output=main&config=%(domain)s&lang=it&ssl=1&framename=mainright&"
+}
