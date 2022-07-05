@@ -1,7 +1,0 @@
-cfg = {
-	"user": "cpanel_user",
-	"password": "cpanel_password",
-	"domain": "domain_name",
-	"login_page": "https://domain_name:2083/",
-	"awstats": "https://domain_name:2083/%(session)s/awstats.pl?databasebreak=month&month=%(month)s&year=%(year)s&output=main&config=%(domain)s&lang=it&ssl=1&framename=mainright&"
-}
