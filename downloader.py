@@ -171,7 +171,7 @@ if __name__ == "__main__":
 	parser.add_argument( '--no-email', action='store_true' )
 	args = parser.parse_args()
 
-	c = CPanelAWStatsDownloader ( args.cfg, args.max_months, args.no_email, args.user, args.password, args.domain )
+	c = CPanelAWStatsDownloader ( args.config, args.max_months, args.no_email, args.user, args.password, args.domain )
 	c.run()
 
 	print( "Done!" )
