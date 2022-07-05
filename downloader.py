@@ -120,7 +120,7 @@ class CPanelAWStatsDownloader:
 				z.write ( os.path.join ( root, file ) )
 		z.close()
 
-	def _send_email ():
+	def _send_email ( self ):
 		"""
 		sends the email with the attachment
 		"""
@@ -132,7 +132,7 @@ class CPanelAWStatsDownloader:
 
 		# create the email
 		msg = MIMEMultipart()
-		msg [ 'Subject' ] = 'Awstats for domain: ' % self.cfg [ 'domain' ]
+		msg [ 'Subject' ] = 'Awstats for domain: %(domain)s' % self.cfg
 		msg [ 'From' ] = self.cfg [ 'smtp' ] [ 'from' ]
 		msg [ 'To' ] = self.cfg [ 'smtp' ] [ 'to' ]
 
