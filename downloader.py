@@ -50,8 +50,6 @@ def download_stats ( max_months = 12 ):
 	year = now.year
 	month = now.month
 
-	max_months = 12
-
 	while max_months:
 		max_months -= 1
 
@@ -80,11 +78,49 @@ def create_stats_zip ():
 			z.write ( os.path.join ( root, file ) )
 	z.close()
 
+def send_email ():
+	"""
+	sends the email with the attachment
+	"""
+	from email.mime.multipart import MIMEMultipart
+	from email.mime.base import MIMEBase
+	from email.mime.text import MIMEText
+	from email import encoders
+	import smtplib
+
+	# create the email
+	msg = MIMEMultipart()
+	msg [ 'Subject' ] = 'Awstats'
+	#msg [ 'From' ] = cfg [ 'smtp' ] [ 'from' ]
+	msg [ 'To' ] = cfg [ 'smtp' ] [ 'to' ]
+
+	# attach the zip file
+
+	z = open ( os.path.join ( cfg [ 'save_dir' ], "awstats.zip" ), 'rb' )
+	zipped = MIMEBase ( 'application', 'zip' )
+	zipped.set_payload ( z.read() )
+	z.close()
+	encoders.encode_base64 ( zipped )
+	zipped.add_header ( 'Content-Disposition', 'attachment', filename = 'awstats.zip' )
+	msg.attach ( zipped )
+
+	# send the email
+
+	s = smtplib.SMTP ( cfg [ 'smtp' ] [ 'server' ] )
+	s.starttls()
+	s.login ( cfg [ 'smtp' ] [ 'user' ], cfg [ 'smtp' ] [ 'password' ] )
+	s.sendmail ( cfg [ 'smtp' ] [ 'from' ], cfg [ 'smtp' ] [ 'to' ], msg.as_string() )
+	s.quit()
+
+
+
 if __name__ == "__main__":
 	login_to_cpanel()
-	download_stats()
+	download_stats( 1 )
 	create_stats_zip()
 	print( "Done!" )
+
+	send_email()
 	sys.exit( 0 )
 
 
