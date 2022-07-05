@@ -28,6 +28,8 @@ import shutil
 import sys
 import zipfile
 
+SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
+
 class CPanelAWStatsDownloader:
 	cfg  = {}
 	sess = None
@@ -66,7 +68,7 @@ class CPanelAWStatsDownloader:
 		os.makedirs(dest_path)
 
 		# copy images to awstats dir
-		shutil.copytree ( "images", os.path.join ( dest_dir, "awstats", "images" ) )
+		shutil.copytree ( os.path.join ( SCRIPT_DIR, "images" ), os.path.join ( dest_dir, "awstats", "images" ) )
 
 	def _login_to_cpanel ( self ):
 		"""
